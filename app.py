@@ -1,10 +1,4 @@
-from flask import Flask
+import streamlit as st
 
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Hello, World! 🌍 — Deployed on Microsoft Azure!"
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+st.title("Hello, Streamlit Cloud 👋")
+st.write("This app is running successfully on Streamlit Cloud!")
