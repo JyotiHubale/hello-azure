@@ -4,32 +4,42 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/yourusername/sample-webapp.git'
+                echo 'Cloning the GitHub repository...'
+                git 'https://github.com/yourusername/your-streamlit-repo.git'
             }
         }
 
-        stage('Build') {
+        stage('Setup Python Environment') {
             steps {
-                echo 'Building the application...'
-                // Example: if using Node.js
-                sh 'npm install'
+                echo 'Setting up Python environment...'
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install --upgrade pip
+                pip install streamlit
+                '''
             }
         }
 
-        stage('Test') {
+        stage('Run Streamlit App') {
             steps {
-                echo 'Running tests...'
-                // Example: run tests
-                sh 'npm test'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
-                // Example deployment step
-                sh 'scp -r * user@server:/var/www/html/'
+                echo 'Starting Streamlit app...'
+                sh '''
+                source venv/bin/activate
+                nohup streamlit run app.py --server.port 8501 &
+                '''
+                echo 'App is running on http://localhost:8501'
             }
         }
     }
+
+    post {
+        success {
+            echo '✅ Streamlit app deployed successfully using Jenkins!'
+        }
+        failure {
+            echo '❌ Build failed. Please check logs.'
+        }
+    }
 }
+
